@@ -75,23 +75,12 @@ function HomePage() {
         backgroundImage: 'url(/images/hero-background.jpg)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
-        padding: '100px 20px 80px',
+        padding: '60px 20px 50px',
         color: 'white',
         textAlign: 'center',
         position: 'relative',
         overflow: 'hidden'
       }}>
-        {/* Dark overlay for text readability */}
-        <div style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'linear-gradient(135deg, rgba(30, 136, 229, 0.75) 0%, rgba(13, 71, 161, 0.75) 100%)',
-          zIndex: 0
-        }} />
-
         <div className="container" style={{ position: 'relative', zIndex: 1 }}>
           <h1 className="hero-title" style={{
             fontSize: '56px',
