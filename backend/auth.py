@@ -10,8 +10,7 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 from secrets import token_urlsafe
 import os
-from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail
+import resend
 
 from database import get_db
 from models import User
@@ -23,8 +22,8 @@ ACCESS_TOKEN_EXPIRE_DAYS = 30
 MAGIC_LINK_EXPIRE_MINUTES = 15
 
 FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:5173")
-SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY")
-FROM_EMAIL = os.getenv("FROM_EMAIL", "noreply@nomadicbigyear.com")
+RESEND_API_KEY = os.getenv("RESEND_API_KEY")
+FROM_EMAIL = os.getenv("FROM_EMAIL", "onboarding@resend.dev")
 
 security = HTTPBearer()
 
@@ -81,44 +80,45 @@ def get_current_user(
     return user
 
 def send_magic_link_email(email: str, token: str):
-    """Send magic link email via SendGrid"""
+    """Send magic link email via Resend"""
     magic_link = f"{FRONTEND_URL}/auth/verify?token={token}"
 
-    message = Mail(
-        from_email=FROM_EMAIL,
-        to_emails=email,
-        subject='Login to Nomadic Big Year 2026',
-        html_content=f"""
-        <html>
-            <body style="font-family: Arial, sans-serif; padding: 20px;">
-                <h2>Welcome to Nomadic Big Year 2026!</h2>
-                <p>Click the link below to log in to your account:</p>
-                <p>
-                    <a href="{magic_link}"
-                       style="background-color: #4CAF50; color: white; padding: 14px 20px;
-                              text-decoration: none; border-radius: 4px; display: inline-block;">
-                        Log In to Nomadic Big Year
-                    </a>
-                </p>
-                <p style="color: #666; font-size: 14px;">
-                    This link will expire in {MAGIC_LINK_EXPIRE_MINUTES} minutes.
-                </p>
-                <p style="color: #666; font-size: 14px;">
-                    If you didn't request this login link, you can safely ignore this email.
-                </p>
-                <hr style="border: 1px solid #eee; margin: 20px 0;">
-                <p style="color: #999; font-size: 12px;">
-                    Nomadic Big Year 2026 - Full-time RV Community Birding Competition
-                </p>
-            </body>
-        </html>
-        """
-    )
+    html_content = f"""
+    <html>
+        <body style="font-family: Arial, sans-serif; padding: 20px;">
+            <h2>Welcome to Nomadic Big Year 2026!</h2>
+            <p>Click the link below to log in to your account:</p>
+            <p>
+                <a href="{magic_link}"
+                   style="background-color: #4CAF50; color: white; padding: 14px 20px;
+                          text-decoration: none; border-radius: 4px; display: inline-block;">
+                    Log In to Nomadic Big Year
+                </a>
+            </p>
+            <p style="color: #666; font-size: 14px;">
+                This link will expire in {MAGIC_LINK_EXPIRE_MINUTES} minutes.
+            </p>
+            <p style="color: #666; font-size: 14px;">
+                If you didn't request this login link, you can safely ignore this email.
+            </p>
+            <hr style="border: 1px solid #eee; margin: 20px 0;">
+            <p style="color: #999; font-size: 12px;">
+                Nomadic Big Year 2026 - Full-time RV Community Birding Competition
+            </p>
+        </body>
+    </html>
+    """
 
-    if SENDGRID_API_KEY:
+    if RESEND_API_KEY:
         try:
-            sg = SendGridAPIClient(SENDGRID_API_KEY)
-            response = sg.send(message)
+            resend.api_key = RESEND_API_KEY
+            response = resend.Emails.send({
+                "from": FROM_EMAIL,
+                "to": [email],
+                "subject": "Login to Nomadic Big Year 2026",
+                "html": html_content
+            })
+            print(f"Email sent successfully: {response}")
             return True
         except Exception as e:
             print(f"Error sending email: {e}")
