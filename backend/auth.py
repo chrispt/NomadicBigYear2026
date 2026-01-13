@@ -26,7 +26,7 @@ MAGIC_LINK_EXPIRE_MINUTES = 15
 
 FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:5173")
 RESEND_API_KEY = os.getenv("RESEND_API_KEY")
-FROM_EMAIL = os.getenv("FROM_EMAIL", "onboarding@resend.dev")
+FROM_EMAIL = os.getenv("FROM_EMAIL", "noreply@nomadicbigyear.com")
 OWNER_EMAIL = os.getenv("OWNER_EMAIL", "chrispohladthomas@gmail.com")
 
 security = HTTPBearer()

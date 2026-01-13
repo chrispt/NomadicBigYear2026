@@ -83,6 +83,8 @@ app = FastAPI(
 FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:5173")
 origins = [
     FRONTEND_URL,
+    "https://nomadicbigyear.com",
+    "https://www.nomadicbigyear.com",
     "http://localhost:5173",
     "http://localhost:3000",
 ]

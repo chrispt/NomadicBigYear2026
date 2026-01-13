@@ -21,14 +21,7 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/auth/verify" element={<VerifyPage />} />
-        <Route
-          path="/leaderboard"
-          element={
-            <PrivateRoute>
-              <LeaderboardPage />
-            </PrivateRoute>
-          }
-        />
+        <Route path="/leaderboard" element={<LeaderboardPage />} />
         <Route
           path="/upload"
           element={
