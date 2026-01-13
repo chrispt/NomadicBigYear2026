@@ -93,66 +93,29 @@ function HomePage() {
         }} />
 
         <div className="container" style={{ position: 'relative', zIndex: 1 }}>
-          <h1 style={{
+          <h1 className="hero-title" style={{
             fontSize: '56px',
             marginBottom: '16px',
             fontWeight: '700',
-            textShadow: '2px 2px 4px rgba(0,0,0,0.2)'
+            textShadow: '2px 2px 4px rgba(0,0,0,0.3)'
           }}>
             Nomadic Big Year 2026
           </h1>
-          <p style={{
+          <p className="hero-subtitle" style={{
             fontSize: '24px',
             marginBottom: '40px',
             opacity: 0.95,
-            fontWeight: '300'
+            fontWeight: '300',
+            textShadow: '1px 1px 2px rgba(0,0,0,0.2)'
           }}>
             A birding competition for full-time RVers
           </p>
 
           <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
-            <Link
-              to="/leaderboard"
-              className="btn"
-              style={{
-                backgroundColor: 'white',
-                color: '#1e88e5',
-                fontSize: '18px',
-                padding: '14px 32px',
-                fontWeight: '600',
-                boxShadow: '0 4px 15px rgba(0,0,0,0.2)',
-                transition: 'transform 0.2s, box-shadow 0.2s'
-              }}
-              onMouseOver={(e) => {
-                e.target.style.transform = 'translateY(-2px)';
-                e.target.style.boxShadow = '0 6px 20px rgba(0,0,0,0.3)';
-              }}
-              onMouseOut={(e) => {
-                e.target.style.transform = 'translateY(0)';
-                e.target.style.boxShadow = '0 4px 15px rgba(0,0,0,0.2)';
-              }}
-            >
+            <Link to="/leaderboard" className="btn btn-hero-primary">
               View Leaderboard
             </Link>
-            <Link
-              to="/login"
-              className="btn"
-              style={{
-                backgroundColor: 'transparent',
-                color: 'white',
-                border: '2px solid white',
-                fontSize: '18px',
-                padding: '12px 32px',
-                fontWeight: '600',
-                transition: 'background-color 0.2s'
-              }}
-              onMouseOver={(e) => {
-                e.target.style.backgroundColor = 'rgba(255,255,255,0.1)';
-              }}
-              onMouseOut={(e) => {
-                e.target.style.backgroundColor = 'transparent';
-              }}
-            >
+            <Link to="/login" className="btn btn-hero-secondary">
               Join the Competition
             </Link>
           </div>
@@ -167,7 +130,16 @@ function HomePage() {
           </h2>
 
           {loadingLeaders ? (
-            <div style={{ textAlign: 'center', color: '#666' }}>Loading...</div>
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', flexWrap: 'wrap' }}>
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="card" style={{ textAlign: 'center', minWidth: '180px', flex: '1', maxWidth: '220px' }}>
+                  <div className="skeleton" style={{ width: '40px', height: '40px', borderRadius: '50%', margin: '0 auto 12px' }} />
+                  <div className="skeleton" style={{ width: '80%', height: '20px', margin: '0 auto 8px' }} />
+                  <div className="skeleton" style={{ width: '50%', height: '32px', margin: '0 auto 4px' }} />
+                  <div className="skeleton" style={{ width: '40%', height: '14px', margin: '0 auto' }} />
+                </div>
+              ))}
+            </div>
           ) : topBirders.length > 0 ? (
             <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', flexWrap: 'wrap' }}>
               {topBirders.map((birder, index) => (
@@ -364,18 +336,7 @@ function HomePage() {
               href="https://www.facebook.com/groups/nomadicbigyear2026"
               target="_blank"
               rel="noopener noreferrer"
-              className="btn"
-              style={{
-                backgroundColor: '#1877f2',
-                color: 'white',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                padding: '12px 24px',
-                fontSize: '16px',
-                fontWeight: '500',
-                textDecoration: 'none'
-              }}
+              className="btn btn-social btn-facebook"
             >
               <FacebookIcon /> Facebook Group
             </a>
@@ -383,18 +344,7 @@ function HomePage() {
               href="https://chat.whatsapp.com/KIurDiZQoC04kevRfDmp3d"
               target="_blank"
               rel="noopener noreferrer"
-              className="btn"
-              style={{
-                backgroundColor: '#25d366',
-                color: 'white',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                padding: '12px 24px',
-                fontSize: '16px',
-                fontWeight: '500',
-                textDecoration: 'none'
-              }}
+              className="btn btn-social btn-whatsapp"
             >
               <WhatsAppIcon /> WhatsApp Chat
             </a>
@@ -415,24 +365,7 @@ function HomePage() {
         </p>
         <Link
           to={authenticated ? "/upload" : "/login"}
-          className="btn"
-          style={{
-            backgroundColor: '#ff8f00',
-            color: 'white',
-            fontSize: '18px',
-            padding: '14px 32px',
-            fontWeight: '600',
-            boxShadow: '0 4px 15px rgba(0,0,0,0.2)',
-            transition: 'transform 0.2s, box-shadow 0.2s'
-          }}
-          onMouseOver={(e) => {
-            e.target.style.transform = 'translateY(-2px)';
-            e.target.style.boxShadow = '0 6px 20px rgba(0,0,0,0.3)';
-          }}
-          onMouseOut={(e) => {
-            e.target.style.transform = 'translateY(0)';
-            e.target.style.boxShadow = '0 4px 15px rgba(0,0,0,0.2)';
-          }}
+          className="btn btn-cta"
         >
           {authenticated ? "Upload Your Data" : "Get Started"}
         </Link>

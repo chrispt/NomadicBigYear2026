@@ -242,3 +242,146 @@ a:hover {
   transform: translateY(-4px);
   box-shadow: 0 8px 25px rgba(0,0,0,0.15);
 }
+
+/* Hero button styles */
+.btn-hero-primary {
+  background-color: white;
+  color: #1e88e5;
+  font-size: 18px;
+  padding: 14px 32px;
+  font-weight: 600;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-hero-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+  text-decoration: none;
+}
+
+.btn-hero-secondary {
+  background-color: transparent;
+  color: white;
+  border: 2px solid white;
+  font-size: 18px;
+  padding: 12px 32px;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+}
+
+.btn-hero-secondary:hover {
+  background-color: rgba(255,255,255,0.15);
+  text-decoration: none;
+}
+
+.btn-cta {
+  background-color: #ff8f00;
+  color: white;
+  font-size: 18px;
+  padding: 14px 32px;
+  font-weight: 600;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+  background-color: #ff9f1a;
+  text-decoration: none;
+}
+
+.btn-social {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 500;
+  color: white;
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.btn-social:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+  text-decoration: none;
+}
+
+.btn-facebook {
+  background-color: #1877f2;
+}
+
+.btn-whatsapp {
+  background-color: #25d366;
+}
+
+/* Loading skeleton animation */
+@keyframes shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200px 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+}
+
+/* Section spacing utilities */
+.section {
+  padding: 60px 20px;
+}
+
+.section-alt {
+  background-color: #f8f9fa;
+}
+
+/* Responsive hero text */
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 36px !important;
+  }
+
+  .hero-subtitle {
+    font-size: 18px !important;
+  }
+
+  .btn-hero-primary,
+  .btn-hero-secondary,
+  .btn-cta {
+    font-size: 16px;
+    padding: 12px 24px;
+  }
+
+  .section {
+    padding: 40px 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-title {
+    font-size: 28px !important;
+  }
+
+  .hero-subtitle {
+    font-size: 16px !important;
+  }
+
+  .btn-hero-primary,
+  .btn-hero-secondary {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+  }
+
+  .section {
+    padding: 32px 12px;
+  }
+}
