@@ -151,24 +151,24 @@ async def get_user_species(
     """)
     species_count = db.execute(count_query, {"user_id": user_id, "year": year}).scalar() or 0
 
-    # Get unique species with first observation
+    # Get unique species with first observation using DISTINCT ON (faster than correlated subquery)
     order_clause = "common_name ASC" if sort == "name" else "first_obs DESC"
 
     species_query = text(f"""
-        SELECT
-            common_name,
-            scientific_name,
-            MIN(observation_date) as first_obs,
-            (SELECT state_province FROM observations o2
-             WHERE o2.user_id = :user_id
-             AND o2.scientific_name = o.scientific_name
-             AND o2.observation_date = MIN(o.observation_date)
-             LIMIT 1) as state_province
-        FROM observations o
-        WHERE user_id = :user_id
-        AND EXTRACT(YEAR FROM observation_date) = :year
-        AND {COUNTABLE_SPECIES_FILTER}
-        GROUP BY scientific_name, common_name
+        WITH first_observations AS (
+            SELECT DISTINCT ON (scientific_name)
+                common_name,
+                scientific_name,
+                observation_date as first_obs,
+                state_province
+            FROM observations
+            WHERE user_id = :user_id
+            AND EXTRACT(YEAR FROM observation_date) = :year
+            AND {COUNTABLE_SPECIES_FILTER}
+            ORDER BY scientific_name, observation_date ASC
+        )
+        SELECT common_name, scientific_name, first_obs, state_province
+        FROM first_observations
         ORDER BY {order_clause}
     """)
 

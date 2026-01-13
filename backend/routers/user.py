@@ -84,8 +84,9 @@ async def update_current_user_profile(
     db.refresh(current_user)
 
     # Refresh materialized view to update leaderboard with new name/privacy
+    # CONCURRENTLY allows reads during refresh (requires unique index)
     try:
-        db.execute(text("REFRESH MATERIALIZED VIEW species_summary;"))
+        db.execute(text("REFRESH MATERIALIZED VIEW CONCURRENTLY species_summary;"))
         db.commit()
     except Exception as e:
         print(f"Error refreshing species_summary: {e}")

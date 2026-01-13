@@ -59,14 +59,17 @@ async def upload_csv(
         )
 
     except ValueError as e:
+        # ValueError is user-facing (missing columns, parse errors)
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=str(e)
         )
     except Exception as e:
+        # Log full error server-side, return generic message to client
+        print(f"CSV processing error for user {current_user.id}: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Error processing CSV: {str(e)}"
+            detail="Error processing CSV file. Please ensure the file is a valid eBird export."
         )
     finally:
         # Clean up temporary file

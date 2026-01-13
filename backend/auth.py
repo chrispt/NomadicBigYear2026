@@ -16,14 +16,18 @@ from database import get_db
 from models import User
 
 # Configuration
-SECRET_KEY = os.getenv("JWT_SECRET_KEY", "your-secret-key-change-in-production")
+SECRET_KEY = os.getenv("JWT_SECRET_KEY")
+if not SECRET_KEY:
+    raise ValueError("JWT_SECRET_KEY environment variable must be set")
+
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_DAYS = 30
+ACCESS_TOKEN_EXPIRE_DAYS = 7  # Reduced from 30 for security
 MAGIC_LINK_EXPIRE_MINUTES = 15
 
 FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:5173")
 RESEND_API_KEY = os.getenv("RESEND_API_KEY")
 FROM_EMAIL = os.getenv("FROM_EMAIL", "onboarding@resend.dev")
+OWNER_EMAIL = os.getenv("OWNER_EMAIL", "chrispohladthomas@gmail.com")
 
 security = HTTPBearer()
 
@@ -134,7 +138,7 @@ def send_magic_link_email(email: str, token: str):
 
 def send_feature_request_email(suggestion: str, user_email: Optional[str] = None):
     """Send feature request email to site owner via Resend"""
-    owner_email = "chrispohladthomas@gmail.com"
+    owner_email = OWNER_EMAIL
 
     reply_to_section = ""
     if user_email:

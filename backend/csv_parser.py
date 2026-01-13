@@ -73,6 +73,10 @@ def parse_ebird_csv(file_path: str, user_id: int, db_session: Session, target_ye
     # Track unique species
     species_set = set()
 
+    # Batch insert for performance (10-100x faster than individual commits)
+    BATCH_SIZE = 100
+    observations_batch = []
+
     for idx, row in df_filtered.iterrows():
         try:
             # Parse observation data
@@ -103,11 +107,7 @@ def parse_ebird_csv(file_path: str, user_id: int, db_session: Session, target_ye
                 ml_catalog_numbers=str(row.get('ML Catalog Numbers', '')).strip() if pd.notna(row.get('ML Catalog Numbers')) else None
             )
 
-            # Insert (skip if duplicate due to UNIQUE constraint)
-            db_session.add(obs)
-            db_session.commit()
-
-            stats["imported"] += 1
+            observations_batch.append(obs)
             species_set.add(row['Scientific Name'])
 
             # Track date range
@@ -116,22 +116,60 @@ def parse_ebird_csv(file_path: str, user_id: int, db_session: Session, target_ye
             if not stats["date_range"]["latest"] or row['Date'] > stats["date_range"]["latest"]:
                 stats["date_range"]["latest"] = row['Date'].strftime('%Y-%m-%d')
 
-        except IntegrityError:
-            # Duplicate observation (UNIQUE constraint violation)
-            db_session.rollback()
-            stats["duplicates"] += 1
+            # Batch insert when batch is full
+            if len(observations_batch) >= BATCH_SIZE:
+                try:
+                    db_session.bulk_save_objects(observations_batch)
+                    db_session.commit()
+                    stats["imported"] += len(observations_batch)
+                except IntegrityError:
+                    # Handle duplicates individually for this batch
+                    db_session.rollback()
+                    for ob in observations_batch:
+                        try:
+                            db_session.add(ob)
+                            db_session.commit()
+                            stats["imported"] += 1
+                        except IntegrityError:
+                            db_session.rollback()
+                            stats["duplicates"] += 1
+                observations_batch = []
+
         except Exception as e:
-            db_session.rollback()
             stats["errors"] += 1
             print(f"Error parsing row {idx}: {e}")
+
+    # Insert remaining observations
+    if observations_batch:
+        try:
+            db_session.bulk_save_objects(observations_batch)
+            db_session.commit()
+            stats["imported"] += len(observations_batch)
+        except IntegrityError:
+            # Handle duplicates individually for remaining batch
+            db_session.rollback()
+            for ob in observations_batch:
+                try:
+                    db_session.add(ob)
+                    db_session.commit()
+                    stats["imported"] += 1
+                except IntegrityError:
+                    db_session.rollback()
+                    stats["duplicates"] += 1
 
     stats["species_count"] = len(species_set)
 
     # Refresh materialized views and recalculate stats
     try:
         db_session.execute(text("SELECT refresh_species_summary();"))
-        db_session.execute(text(f"SELECT calculate_monthly_stats({user_id}, {target_year});"))
-        db_session.execute(text(f"SELECT calculate_geographic_stats({user_id});"))
+        db_session.execute(
+            text("SELECT calculate_monthly_stats(:user_id, :year)"),
+            {"user_id": user_id, "year": target_year}
+        )
+        db_session.execute(
+            text("SELECT calculate_geographic_stats(:user_id)"),
+            {"user_id": user_id}
+        )
         db_session.commit()
     except Exception as e:
         print(f"Error refreshing views: {e}")

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import api from '../services/api';
 
 function SpeciesModal({ userId, userName, onClose }) {
@@ -7,15 +7,16 @@ function SpeciesModal({ userId, userName, onClose }) {
   const [data, setData] = useState(null);
   const [sortBy, setSortBy] = useState('name');
 
+  // Fetch data once on mount
   useEffect(() => {
     fetchSpecies();
-  }, [userId, sortBy]);
+  }, [userId]);
 
   const fetchSpecies = async () => {
     setLoading(true);
     setError('');
     try {
-      const response = await api.get(`/leaderboard/${userId}/species?sort=${sortBy}`);
+      const response = await api.get(`/leaderboard/${userId}/species`);
       setData(response.data);
     } catch (err) {
       setError(err.response?.data?.detail || 'Failed to load species list');
@@ -23,6 +24,19 @@ function SpeciesModal({ userId, userName, onClose }) {
       setLoading(false);
     }
   };
+
+  // Client-side sorting for better performance (no re-fetch needed)
+  const sortedSpecies = useMemo(() => {
+    if (!data?.species) return [];
+    return [...data.species].sort((a, b) => {
+      if (sortBy === 'name') {
+        return a.common_name.localeCompare(b.common_name);
+      } else {
+        // Sort by date (newest first)
+        return new Date(b.first_observation_date) - new Date(a.first_observation_date);
+      }
+    });
+  }, [data?.species, sortBy]);
 
   // Close on Escape key
   useEffect(() => {
@@ -42,6 +56,9 @@ function SpeciesModal({ userId, userName, onClose }) {
 
   return (
     <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="species-modal-title"
       onClick={handleOverlayClick}
       style={{
         position: 'fixed',
@@ -75,7 +92,7 @@ function SpeciesModal({ userId, userName, onClose }) {
           alignItems: 'center',
         }}>
           <div>
-            <h2 style={{ margin: 0 }}>{userName}'s Species List</h2>
+            <h2 id="species-modal-title" style={{ margin: 0 }}>{userName}'s Species List</h2>
             {data && (
               <p style={{ color: '#666', fontSize: '14px', marginTop: '5px', marginBottom: 0 }}>
                 {data.species_count} species in 2026
@@ -84,6 +101,7 @@ function SpeciesModal({ userId, userName, onClose }) {
           </div>
           <button
             onClick={onClose}
+            aria-label="Close modal"
             style={{
               background: 'none',
               border: 'none',
@@ -158,7 +176,7 @@ function SpeciesModal({ userId, userName, onClose }) {
               )}
 
               {/* Species table */}
-              {data.species && data.species.length > 0 ? (
+              {sortedSpecies.length > 0 ? (
                 <table className="table" style={{ width: '100%' }}>
                   <thead>
                     <tr>
@@ -171,7 +189,7 @@ function SpeciesModal({ userId, userName, onClose }) {
                     </tr>
                   </thead>
                   <tbody>
-                    {data.species.map((species, index) => (
+                    {sortedSpecies.map((species, index) => (
                       <tr key={species.scientific_name}>
                         <td style={{ color: '#999' }}>{index + 1}</td>
                         <td>
