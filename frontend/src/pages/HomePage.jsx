@@ -3,16 +3,6 @@ import { Link } from 'react-router-dom';
 import { isAuthenticated } from '../services/auth';
 import api from '../services/api';
 
-// Bird silhouette SVG component
-const BirdSilhouette = ({ style }) => (
-  <svg viewBox="0 0 100 50" style={style}>
-    <path
-      d="M10 25 Q25 10 40 25 Q55 10 70 25 L50 35 Z"
-      fill="currentColor"
-    />
-  </svg>
-);
-
 // Icon components for How It Works section
 const EmailIcon = () => (
   <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
@@ -82,42 +72,24 @@ function HomePage() {
     <div style={{ minHeight: '100vh' }}>
       {/* Hero Section */}
       <div style={{
-        background: 'linear-gradient(135deg, #1e88e5 0%, #0d47a1 100%)',
+        backgroundImage: 'url(/images/hero-background.jpg)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
         padding: '100px 20px 80px',
         color: 'white',
         textAlign: 'center',
         position: 'relative',
         overflow: 'hidden'
       }}>
-        {/* Animated bird silhouettes */}
-        <BirdSilhouette style={{
+        {/* Dark overlay for text readability */}
+        <div style={{
           position: 'absolute',
-          top: '15%',
-          right: '10%',
-          width: '80px',
-          opacity: 0.2,
-          color: 'white',
-          animation: 'float 4s ease-in-out infinite'
-        }} />
-        <BirdSilhouette style={{
-          position: 'absolute',
-          top: '25%',
-          right: '20%',
-          width: '50px',
-          opacity: 0.15,
-          color: 'white',
-          animation: 'float 5s ease-in-out infinite',
-          animationDelay: '1s'
-        }} />
-        <BirdSilhouette style={{
-          position: 'absolute',
-          top: '10%',
-          left: '15%',
-          width: '60px',
-          opacity: 0.15,
-          color: 'white',
-          animation: 'float 4.5s ease-in-out infinite',
-          animationDelay: '0.5s'
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'linear-gradient(135deg, rgba(30, 136, 229, 0.75) 0%, rgba(13, 71, 161, 0.75) 100%)',
+          zIndex: 0
         }} />
 
         <div className="container" style={{ position: 'relative', zIndex: 1 }}>
