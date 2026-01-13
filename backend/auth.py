@@ -132,6 +132,59 @@ def send_magic_link_email(email: str, token: str):
         print(f"=============================\n")
         return True
 
+def send_feature_request_email(suggestion: str, user_email: Optional[str] = None):
+    """Send feature request email to site owner via Resend"""
+    owner_email = "chrispohladthomas@gmail.com"
+
+    reply_to_section = ""
+    if user_email:
+        reply_to_section = f"<p><strong>Reply to:</strong> {user_email}</p>"
+
+    html_content = f"""
+    <html>
+        <body style="font-family: Arial, sans-serif; padding: 20px;">
+            <h2>New Feature Request</h2>
+            {reply_to_section}
+            <h3>Suggestion:</h3>
+            <p style="background: #f5f5f5; padding: 15px; border-radius: 4px;">
+                {suggestion}
+            </p>
+            <hr style="border: 1px solid #eee; margin: 20px 0;">
+            <p style="color: #999; font-size: 12px;">
+                Submitted via Nomadic Big Year 2026 Leaderboard
+            </p>
+        </body>
+    </html>
+    """
+
+    if RESEND_API_KEY:
+        try:
+            resend.api_key = RESEND_API_KEY
+            email_params = {
+                "from": FROM_EMAIL,
+                "to": [owner_email],
+                "subject": "Nomadic Big Year 2026 Leaderboard Feature Request",
+                "html": html_content
+            }
+            if user_email:
+                email_params["reply_to"] = user_email
+
+            response = resend.Emails.send(email_params)
+            print(f"Feature request email sent: {response}")
+            return True
+        except Exception as e:
+            print(f"Error sending feature request email: {e}")
+            return False
+    else:
+        # Development mode
+        print(f"\n=== FEATURE REQUEST (DEV MODE) ===")
+        print(f"To: {owner_email}")
+        print(f"Reply-to: {user_email or 'N/A'}")
+        print(f"Suggestion: {suggestion}")
+        print(f"==================================\n")
+        return True
+
+
 def create_magic_link(email: str, db: Session) -> tuple[User, str]:
     """
     Create or get user and generate magic link token

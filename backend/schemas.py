@@ -162,3 +162,11 @@ class ActivityItem(BaseModel):
 
 class ActivityFeedResponse(BaseModel):
     recent_activity: List[ActivityItem]
+
+# Feature request schemas
+class FeatureRequestRequest(BaseModel):
+    suggestion: str = Field(..., min_length=10, max_length=2000)
+    email: Optional[EmailStr] = None
+
+class FeatureRequestResponse(BaseModel):
+    message: str

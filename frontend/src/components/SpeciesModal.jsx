@@ -108,14 +108,6 @@ function SpeciesModal({ userId, userName, onClose }) {
             <div style={{ textAlign: 'center', padding: '40px', color: '#dc3545' }}>
               {error}
             </div>
-          ) : data?.species === null ? (
-            // counts_only privacy
-            <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
-              <p style={{ fontSize: '48px', marginBottom: '20px', color: '#4a7c59' }}>
-                {data.species_count}
-              </p>
-              <p>{data.message}</p>
-            </div>
           ) : (
             <>
               {/* Sort controls */}
@@ -151,6 +143,20 @@ function SpeciesModal({ userId, userName, onClose }) {
                 </button>
               </div>
 
+              {/* Privacy message if applicable */}
+              {data.message && (
+                <div style={{
+                  padding: '10px 15px',
+                  marginBottom: '15px',
+                  background: '#fff3e0',
+                  borderRadius: '4px',
+                  fontSize: '14px',
+                  color: '#e65100',
+                }}>
+                  {data.message}
+                </div>
+              )}
+
               {/* Species table */}
               {data.species && data.species.length > 0 ? (
                 <table className="table" style={{ width: '100%' }}>
@@ -159,7 +165,9 @@ function SpeciesModal({ userId, userName, onClose }) {
                       <th style={{ width: '40px', textAlign: 'left' }}>#</th>
                       <th style={{ textAlign: 'left' }}>Species</th>
                       <th style={{ textAlign: 'left' }}>First Seen</th>
-                      <th style={{ textAlign: 'left' }}>State</th>
+                      {data.privacy_level === 'public' && (
+                        <th style={{ textAlign: 'left' }}>State</th>
+                      )}
                     </tr>
                   </thead>
                   <tbody>
@@ -175,7 +183,9 @@ function SpeciesModal({ userId, userName, onClose }) {
                         <td>
                           {new Date(species.first_observation_date).toLocaleDateString()}
                         </td>
-                        <td>{species.state_province || '-'}</td>
+                        {data.privacy_level === 'public' && (
+                          <td>{species.state_province || '-'}</td>
+                        )}
                       </tr>
                     ))}
                   </tbody>

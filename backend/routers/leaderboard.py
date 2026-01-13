@@ -127,8 +127,8 @@ async def get_user_species(
 ):
     """
     Get public species list for a user.
-    - public: Returns full species list with details
-    - counts_only: Returns only the count, no species list
+    - public: Returns full species list with dates and locations
+    - counts_only: Returns species list with dates but NO locations
     - private: Returns 404 (user not visible on leaderboard)
 
     Excludes uncountable species (domestics, hybrids, spuhs, slashes).
@@ -151,18 +151,7 @@ async def get_user_species(
     """)
     species_count = db.execute(count_query, {"user_id": user_id, "year": year}).scalar() or 0
 
-    # Handle counts_only privacy
-    if user.privacy_level == 'counts_only':
-        return PublicUserSpeciesResponse(
-            user_id=user.id,
-            user_name=user.name,
-            privacy_level=user.privacy_level,
-            species_count=species_count,
-            species=None,
-            message="This user has chosen to share only their species count."
-        )
-
-    # For public users, get unique species with first observation
+    # Get unique species with first observation
     order_clause = "common_name ASC" if sort == "name" else "first_obs DESC"
 
     species_query = text(f"""
@@ -186,20 +175,27 @@ async def get_user_species(
     result = db.execute(species_query, {"user_id": user_id, "year": year})
     rows = result.fetchall()
 
+    # For counts_only users, hide location data
+    hide_location = user.privacy_level == 'counts_only'
+
     species_list = [
         PublicSpeciesEntry(
             common_name=row.common_name,
             scientific_name=row.scientific_name,
             first_observation_date=row.first_obs,
-            state_province=row.state_province
+            state_province=None if hide_location else row.state_province
         )
         for row in rows
     ]
+
+    # Add message for counts_only users
+    message = "Location data hidden per user privacy settings." if hide_location else None
 
     return PublicUserSpeciesResponse(
         user_id=user.id,
         user_name=user.name,
         privacy_level=user.privacy_level,
         species_count=species_count,
-        species=species_list
+        species=species_list,
+        message=message
     )

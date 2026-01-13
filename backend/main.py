@@ -7,7 +7,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import os
 
-from routers import auth, upload, leaderboard, user
+from routers import auth, upload, leaderboard, user, feedback
 from database import SessionLocal
 from sqlalchemy import text
 
@@ -100,6 +100,7 @@ app.include_router(auth.router)
 app.include_router(upload.router)
 app.include_router(leaderboard.router)
 app.include_router(user.router)
+app.include_router(feedback.router)
 
 @app.get("/")
 async def root():

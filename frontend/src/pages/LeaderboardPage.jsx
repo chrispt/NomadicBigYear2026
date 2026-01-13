@@ -4,6 +4,13 @@ import api from '../services/api';
 import { logout } from '../services/auth';
 import SpeciesModal from '../components/SpeciesModal';
 
+// New features list - update this when adding features, old ones auto-hide after 30 days
+const NEW_FEATURES = [
+  { date: '2026-01-12', text: 'Click any name to view their species list' },
+  { date: '2026-01-12', text: 'Submit feature requests via the form below' },
+  { date: '2026-01-12', text: 'Privacy: "Counts Only" now shows species but hides locations' },
+];
+
 function LeaderboardPage() {
   const [leaderboard, setLeaderboard] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -11,6 +18,17 @@ function LeaderboardPage() {
   const [year, setYear] = useState(2026);
   const [participants, setParticipants] = useState(0);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [featuresExpanded, setFeaturesExpanded] = useState(false);
+  const [featureRequest, setFeatureRequest] = useState('');
+  const [featureEmail, setFeatureEmail] = useState('');
+  const [featureSubmitting, setFeatureSubmitting] = useState(false);
+  const [featureMessage, setFeatureMessage] = useState({ type: '', text: '' });
+
+  // Filter features to show only those from last 30 days
+  const recentFeatures = NEW_FEATURES.filter(f => {
+    const daysOld = (new Date() - new Date(f.date)) / (1000 * 60 * 60 * 24);
+    return daysOld <= 30;
+  });
 
   useEffect(() => {
     fetchLeaderboard();
@@ -38,6 +56,34 @@ function LeaderboardPage() {
     return '#333';
   };
 
+  const handleFeatureSubmit = async (e) => {
+    e.preventDefault();
+    if (featureRequest.trim().length < 10) {
+      setFeatureMessage({ type: 'error', text: 'Please provide at least 10 characters.' });
+      return;
+    }
+
+    setFeatureSubmitting(true);
+    setFeatureMessage({ type: '', text: '' });
+
+    try {
+      await api.post('/feedback/feature-request', {
+        suggestion: featureRequest.trim(),
+        email: featureEmail.trim() || null,
+      });
+      setFeatureMessage({ type: 'success', text: 'Thank you! Your suggestion has been submitted.' });
+      setFeatureRequest('');
+      setFeatureEmail('');
+    } catch (err) {
+      setFeatureMessage({
+        type: 'error',
+        text: err.response?.data?.detail || 'Failed to submit. Please try again.',
+      });
+    } finally {
+      setFeatureSubmitting(false);
+    }
+  };
+
   return (
     <div style={{ minHeight: '100vh', background: '#f5f5f5', paddingBottom: '40px' }}>
       {/* Header/Navbar */}
@@ -53,6 +99,59 @@ function LeaderboardPage() {
       </div>
 
       <div className="container" style={{ marginTop: '40px' }}>
+        {/* New Features Collapsible */}
+        {recentFeatures.length > 0 && (
+          <div style={{
+            background: 'white',
+            borderRadius: '8px',
+            marginBottom: '20px',
+            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+            overflow: 'hidden',
+          }}>
+            <button
+              onClick={() => setFeaturesExpanded(!featuresExpanded)}
+              style={{
+                width: '100%',
+                padding: '15px 20px',
+                background: '#667eea',
+                color: 'white',
+                border: 'none',
+                cursor: 'pointer',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                fontSize: '16px',
+                fontWeight: '500',
+              }}
+            >
+              <span>New Features ({recentFeatures.length})</span>
+              <span style={{ fontSize: '12px' }}>{featuresExpanded ? '▼' : '▶'}</span>
+            </button>
+            {featuresExpanded && (
+              <div style={{ padding: '15px 20px' }}>
+                <ul style={{ margin: 0, paddingLeft: '20px' }}>
+                  {recentFeatures.map((feature, index) => (
+                    <li key={index} style={{ marginBottom: '8px', color: '#333' }}>
+                      {feature.text}
+                      <span style={{ color: '#999', fontSize: '12px', marginLeft: '10px' }}>
+                        ({new Date(feature.date).toLocaleDateString()})
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+                <div style={{ marginTop: '15px', paddingTop: '15px', borderTop: '1px solid #eee', fontSize: '13px', color: '#666' }}>
+                  <strong>Privacy Levels:</strong>
+                  <ul style={{ margin: '8px 0 0 0', paddingLeft: '20px' }}>
+                    <li><strong>Public:</strong> Species list with dates and locations visible</li>
+                    <li><strong>Counts Only:</strong> Species list visible, but locations hidden</li>
+                    <li><strong>Private:</strong> Not shown on leaderboard</li>
+                  </ul>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
         <div className="card">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px', flexWrap: 'wrap', gap: '20px' }}>
             <div>
@@ -164,6 +263,65 @@ function LeaderboardPage() {
           <p style={{ marginTop: '10px' }}>
             Rankings update automatically when you upload your eBird CSV data.
           </p>
+        </div>
+
+        {/* Feature Request Form */}
+        <div className="card" style={{ marginTop: '40px' }}>
+          <h3 style={{ marginBottom: '15px' }}>Suggest a Feature</h3>
+          <p style={{ color: '#666', fontSize: '14px', marginBottom: '20px' }}>
+            Have an idea to improve the leaderboard? Let us know!
+          </p>
+
+          <form onSubmit={handleFeatureSubmit}>
+            <div style={{ marginBottom: '15px' }}>
+              <textarea
+                value={featureRequest}
+                onChange={(e) => setFeatureRequest(e.target.value)}
+                placeholder="Describe your feature idea... (minimum 10 characters)"
+                style={{
+                  width: '100%',
+                  minHeight: '100px',
+                  padding: '12px',
+                  border: '1px solid #ddd',
+                  borderRadius: '4px',
+                  fontSize: '14px',
+                  resize: 'vertical',
+                  boxSizing: 'border-box',
+                }}
+              />
+            </div>
+            <div style={{ marginBottom: '15px' }}>
+              <input
+                type="email"
+                value={featureEmail}
+                onChange={(e) => setFeatureEmail(e.target.value)}
+                placeholder="Your email (optional, for follow-up)"
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  border: '1px solid #ddd',
+                  borderRadius: '4px',
+                  fontSize: '14px',
+                  boxSizing: 'border-box',
+                }}
+              />
+            </div>
+
+            {featureMessage.text && (
+              <div className={featureMessage.type} style={{ marginBottom: '15px' }}>
+                {featureMessage.text}
+              </div>
+            )}
+
+            <button
+              type="submit"
+              disabled={featureSubmitting}
+              className="btn btn-primary"
+              style={{ opacity: featureSubmitting ? 0.7 : 1 }}
+            >
+              {featureSubmitting ? 'Submitting...' : 'Submit Suggestion'}
+            </button>
+          </form>
         </div>
       </div>
 
