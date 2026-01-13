@@ -214,8 +214,9 @@ function HomePage() {
           </h2>
 
           <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+            display: 'flex',
+            flexWrap: 'wrap',
+            justifyContent: 'center',
             gap: '30px'
           }}>
             {steps.map((step, index) => (
@@ -225,7 +226,8 @@ function HomePage() {
                   textAlign: 'center',
                   opacity: 0,
                   animation: 'fadeInUp 0.6s ease-out forwards',
-                  animationDelay: `${index * 0.15}s`
+                  animationDelay: `${index * 0.15}s`,
+                  width: '200px'
                 }}
               >
                 <div style={{
