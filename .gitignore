@@ -44,3 +44,8 @@ Thumbs.db
 # Temporary files
 *.tmp
 *.temp
+
+# Database initialization script (contains credentials when run)
+init_database.py
+
+.vercel
