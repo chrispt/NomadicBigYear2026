@@ -41,6 +41,58 @@ const WhatsAppIcon = () => (
   </svg>
 );
 
+// Olympic medal icons for leader cards
+const GoldMedal = () => (
+  <svg width="48" height="56" viewBox="0 0 48 56" aria-hidden="true">
+    <path d="M14 0h8l-4 16h-8z" fill="#1e88e5"/>
+    <path d="M26 0h8l4 16h-8z" fill="#1565c0"/>
+    <circle cx="24" cy="36" r="18" fill="url(#goldGradient)"/>
+    <circle cx="24" cy="36" r="14" fill="none" stroke="#c9a227" strokeWidth="2"/>
+    <text x="24" y="42" textAnchor="middle" fontSize="18" fontWeight="bold" fill="#8b6914">1</text>
+    <defs>
+      <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="#ffd700"/>
+        <stop offset="50%" stopColor="#ffec8b"/>
+        <stop offset="100%" stopColor="#daa520"/>
+      </linearGradient>
+    </defs>
+  </svg>
+);
+
+const SilverMedal = () => (
+  <svg width="48" height="56" viewBox="0 0 48 56" aria-hidden="true">
+    <path d="M14 0h8l-4 16h-8z" fill="#1e88e5"/>
+    <path d="M26 0h8l4 16h-8z" fill="#1565c0"/>
+    <circle cx="24" cy="36" r="18" fill="url(#silverGradient)"/>
+    <circle cx="24" cy="36" r="14" fill="none" stroke="#a8a8a8" strokeWidth="2"/>
+    <text x="24" y="42" textAnchor="middle" fontSize="18" fontWeight="bold" fill="#666">2</text>
+    <defs>
+      <linearGradient id="silverGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="#e8e8e8"/>
+        <stop offset="50%" stopColor="#ffffff"/>
+        <stop offset="100%" stopColor="#c0c0c0"/>
+      </linearGradient>
+    </defs>
+  </svg>
+);
+
+const BronzeMedal = () => (
+  <svg width="48" height="56" viewBox="0 0 48 56" aria-hidden="true">
+    <path d="M14 0h8l-4 16h-8z" fill="#1e88e5"/>
+    <path d="M26 0h8l4 16h-8z" fill="#1565c0"/>
+    <circle cx="24" cy="36" r="18" fill="url(#bronzeGradient)"/>
+    <circle cx="24" cy="36" r="14" fill="none" stroke="#8b5a2b" strokeWidth="2"/>
+    <text x="24" y="42" textAnchor="middle" fontSize="18" fontWeight="bold" fill="#5c3d2e">3</text>
+    <defs>
+      <linearGradient id="bronzeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="#cd7f32"/>
+        <stop offset="50%" stopColor="#daa06d"/>
+        <stop offset="100%" stopColor="#a0522d"/>
+      </linearGradient>
+    </defs>
+  </svg>
+);
+
 function HomePage() {
   const authenticated = isAuthenticated();
   const [topBirders, setTopBirders] = useState([]);
@@ -171,11 +223,8 @@ function HomePage() {
                     cursor: 'pointer'
                   }}
                 >
-                  <div style={{
-                    fontSize: '36px',
-                    marginBottom: '8px'
-                  }}>
-                    {index === 0 ? '🥇' : index === 1 ? '🥈' : '🥉'}
+                    <div style={{ marginBottom: '8px' }}>
+                    {index === 0 ? <GoldMedal /> : index === 1 ? <SilverMedal /> : <BronzeMedal />}
                   </div>
                   <div style={{ fontWeight: '600', fontSize: '18px', color: '#333' }}>
                     {birder.name}
