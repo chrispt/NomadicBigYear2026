@@ -7,6 +7,7 @@ import pandas as pd
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 
+from sqlalchemy import text
 from models import Observation
 
 def parse_time(time_str: str):
@@ -128,9 +129,9 @@ def parse_ebird_csv(file_path: str, user_id: int, db_session: Session, target_ye
 
     # Refresh materialized views and recalculate stats
     try:
-        db_session.execute("SELECT refresh_species_summary();")
-        db_session.execute(f"SELECT calculate_monthly_stats({user_id}, {target_year});")
-        db_session.execute(f"SELECT calculate_geographic_stats({user_id});")
+        db_session.execute(text("SELECT refresh_species_summary();"))
+        db_session.execute(text(f"SELECT calculate_monthly_stats({user_id}, {target_year});"))
+        db_session.execute(text(f"SELECT calculate_geographic_stats({user_id});"))
         db_session.commit()
     except Exception as e:
         print(f"Error refreshing views: {e}")
