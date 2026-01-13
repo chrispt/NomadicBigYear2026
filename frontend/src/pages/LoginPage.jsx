@@ -95,7 +95,7 @@ function LoginPage() {
           )}
 
           <div style={{ marginTop: '30px', textAlign: 'center' }}>
-            <Link to="/" style={{ color: '#008CBA', textDecoration: 'none' }}>
+            <Link to="/" style={{ color: '#1565c0', textDecoration: 'none' }}>
               ← Back to Home
             </Link>
           </div>

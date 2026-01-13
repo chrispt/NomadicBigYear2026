@@ -86,7 +86,7 @@ function LeaderboardPage() {
   return (
     <div style={{ minHeight: '100vh', background: '#f5f5f5', paddingBottom: '40px' }}>
       {/* Header/Navbar */}
-      <div style={{ background: '#667eea', color: 'white', padding: '20px 0' }}>
+      <div style={{ background: '#1e88e5', color: 'white', padding: '20px 0' }}>
         <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
           <h1 style={{ fontSize: '28px', margin: 0 }}>Nomadic Big Year 2026</h1>
           <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
@@ -112,7 +112,7 @@ function LeaderboardPage() {
               style={{
                 width: '100%',
                 padding: '15px 20px',
-                background: '#667eea',
+                background: '#1e88e5',
                 color: 'white',
                 border: 'none',
                 cursor: 'pointer',
@@ -200,7 +200,7 @@ function LeaderboardPage() {
                             border: 'none',
                             padding: 0,
                             cursor: 'pointer',
-                            color: '#667eea',
+                            color: '#1e88e5',
                             textDecoration: 'underline',
                             fontWeight: 'bold',
                             fontSize: 'inherit',

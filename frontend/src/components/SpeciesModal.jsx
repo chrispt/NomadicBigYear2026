@@ -139,7 +139,7 @@ function SpeciesModal({ userId, userName, onClose }) {
                     border: '1px solid #ccc',
                     borderRadius: '4px',
                     cursor: 'pointer',
-                    backgroundColor: sortBy === 'name' ? '#4a7c59' : 'white',
+                    backgroundColor: sortBy === 'name' ? '#1e88e5' : 'white',
                     color: sortBy === 'name' ? 'white' : '#333',
                   }}
                 >
@@ -153,7 +153,7 @@ function SpeciesModal({ userId, userName, onClose }) {
                     border: '1px solid #ccc',
                     borderRadius: '4px',
                     cursor: 'pointer',
-                    backgroundColor: sortBy === 'date' ? '#4a7c59' : 'white',
+                    backgroundColor: sortBy === 'date' ? '#1e88e5' : 'white',
                     color: sortBy === 'date' ? 'white' : '#333',
                   }}
                 >

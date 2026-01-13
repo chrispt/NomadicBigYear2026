@@ -73,7 +73,7 @@ function UploadPage() {
   return (
     <div style={{ minHeight: '100vh', background: '#f5f5f5', paddingBottom: '40px' }}>
       {/* Header/Navbar */}
-      <div style={{ background: '#667eea', color: 'white', padding: '20px 0' }}>
+      <div style={{ background: '#1e88e5', color: 'white', padding: '20px 0' }}>
         <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
           <h1 style={{ fontSize: '28px', margin: 0 }}>Upload eBird Data</h1>
           <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
