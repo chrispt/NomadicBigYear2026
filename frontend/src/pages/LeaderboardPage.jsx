@@ -15,7 +15,6 @@ function LeaderboardPage() {
   const [leaderboard, setLeaderboard] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [year, setYear] = useState(2026);
   const [participants, setParticipants] = useState(0);
   const [selectedUser, setSelectedUser] = useState(null);
   const [featuresExpanded, setFeaturesExpanded] = useState(false);
@@ -32,14 +31,14 @@ function LeaderboardPage() {
 
   useEffect(() => {
     fetchLeaderboard();
-  }, [year]);
+  }, []);
 
   const fetchLeaderboard = async () => {
     setLoading(true);
     setError('');
 
     try {
-      const response = await api.get(`/leaderboard?year=${year}`);
+      const response = await api.get('/leaderboard?year=2026');
       setLeaderboard(response.data.leaderboard);
       setParticipants(response.data.participants);
     } catch (err) {
@@ -153,29 +152,11 @@ function LeaderboardPage() {
         )}
 
         <div className="card">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px', flexWrap: 'wrap', gap: '20px' }}>
-            <div>
-              <h2 style={{ marginBottom: '5px' }}>Leaderboard</h2>
-              <p style={{ color: '#666', fontSize: '14px' }}>
-                {participants} participants • Ranked by species count in {year}
-              </p>
-            </div>
-            <div>
-              <label style={{ marginRight: '10px', fontWeight: '500' }}>Year:</label>
-              <select
-                value={year}
-                onChange={(e) => setYear(Number(e.target.value))}
-                style={{
-                  padding: '8px 12px',
-                  border: '1px solid #ddd',
-                  borderRadius: '4px',
-                  fontSize: '16px',
-                }}
-              >
-                <option value={2026}>2026</option>
-                <option value={2027}>2027</option>
-              </select>
-            </div>
+          <div style={{ marginBottom: '30px' }}>
+            <h2 style={{ marginBottom: '5px' }}>Leaderboard</h2>
+            <p style={{ color: '#666', fontSize: '14px' }}>
+              {participants} participants • Ranked by species count in 2026
+            </p>
           </div>
 
           {error && (
