@@ -292,11 +292,12 @@ function HomePage() {
           </h2>
 
           <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+            display: 'flex',
+            flexWrap: 'wrap',
+            justifyContent: 'center',
             gap: '20px'
           }}>
-            <div className="card card-hover">
+            <div className="card card-hover" style={{ flex: '0 0 300px' }}>
               <h3 style={{ marginBottom: '10px', color: '#1e88e5', display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <span style={{ fontSize: '20px' }}>📅</span> Dates
               </h3>
@@ -304,7 +305,7 @@ function HomePage() {
                 January 1 - December 31, 2026. All observations must fall within this year.
               </p>
             </div>
-            <div className="card card-hover">
+            <div className="card card-hover" style={{ flex: '0 0 300px' }}>
               <h3 style={{ marginBottom: '10px', color: '#1e88e5', display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <span style={{ fontSize: '20px' }}>🐦</span> Countable Species
               </h3>
@@ -312,7 +313,7 @@ function HomePage() {
                 Only wild birds count. Hybrids, domestics, and unidentified birds are excluded.
               </p>
             </div>
-            <div className="card card-hover">
+            <div className="card card-hover" style={{ flex: '0 0 300px' }}>
               <h3 style={{ marginBottom: '10px', color: '#1e88e5', display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <span style={{ fontSize: '20px' }}>🏆</span> Scoring
               </h3>
