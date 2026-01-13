@@ -60,6 +60,7 @@ function SpeciesModal({ userId, userName, onClose }) {
       aria-modal="true"
       aria-labelledby="species-modal-title"
       onClick={handleOverlayClick}
+      className="modal-backdrop"
       style={{
         position: 'fixed',
         top: 0,
@@ -73,16 +74,18 @@ function SpeciesModal({ userId, userName, onClose }) {
         zIndex: 1000,
       }}
     >
-      <div style={{
-        background: 'white',
-        borderRadius: '8px',
-        width: '90%',
-        maxWidth: '700px',
-        maxHeight: '80vh',
-        display: 'flex',
-        flexDirection: 'column',
-        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
-      }}>
+      <div
+        className="modal-content"
+        style={{
+          background: 'white',
+          borderRadius: '8px',
+          width: '90%',
+          maxWidth: '700px',
+          maxHeight: '80vh',
+          display: 'flex',
+          flexDirection: 'column',
+          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
+        }}>
         {/* Header */}
         <div style={{
           padding: '20px',
@@ -94,7 +97,7 @@ function SpeciesModal({ userId, userName, onClose }) {
           <div>
             <h2 id="species-modal-title" style={{ margin: 0 }}>{userName}'s Species List</h2>
             {data && (
-              <p style={{ color: '#666', fontSize: '14px', marginTop: '5px', marginBottom: 0 }}>
+              <p style={{ color: '#555', fontSize: '14px', marginTop: '5px', marginBottom: 0 }}>
                 {data.species_count} species in 2026
               </p>
             )}
@@ -102,15 +105,7 @@ function SpeciesModal({ userId, userName, onClose }) {
           <button
             onClick={onClose}
             aria-label="Close modal"
-            style={{
-              background: 'none',
-              border: 'none',
-              fontSize: '28px',
-              cursor: 'pointer',
-              color: '#666',
-              padding: '0 5px',
-              lineHeight: 1,
-            }}
+            className="btn-close"
           >
             &times;
           </button>
@@ -119,7 +114,7 @@ function SpeciesModal({ userId, userName, onClose }) {
         {/* Content */}
         <div style={{ padding: '20px', overflow: 'auto', flex: 1 }}>
           {loading ? (
-            <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
+            <div style={{ textAlign: 'center', padding: '40px', color: '#555' }}>
               Loading species...
             </div>
           ) : error ? (
@@ -130,7 +125,7 @@ function SpeciesModal({ userId, userName, onClose }) {
             <>
               {/* Sort controls */}
               <div style={{ marginBottom: '15px', display: 'flex', gap: '10px', alignItems: 'center' }}>
-                <span style={{ fontSize: '14px', color: '#666' }}>Sort by:</span>
+                <span style={{ fontSize: '14px', color: '#555' }}>Sort by:</span>
                 <button
                   onClick={() => setSortBy('name')}
                   style={{
@@ -180,11 +175,11 @@ function SpeciesModal({ userId, userName, onClose }) {
                 <table className="table" style={{ width: '100%' }}>
                   <thead>
                     <tr>
-                      <th style={{ width: '40px', textAlign: 'left' }}>#</th>
-                      <th style={{ textAlign: 'left' }}>Species</th>
-                      <th style={{ textAlign: 'left' }}>First Seen</th>
+                      <th scope="col" style={{ width: '40px', textAlign: 'left' }}>#</th>
+                      <th scope="col" style={{ textAlign: 'left' }}>Species</th>
+                      <th scope="col" style={{ textAlign: 'left' }}>First Seen</th>
                       {data.privacy_level === 'public' && (
-                        <th style={{ textAlign: 'left' }}>State</th>
+                        <th scope="col" style={{ textAlign: 'left' }}>State</th>
                       )}
                     </tr>
                   </thead>
@@ -194,7 +189,7 @@ function SpeciesModal({ userId, userName, onClose }) {
                         <td style={{ color: '#999' }}>{index + 1}</td>
                         <td>
                           <div style={{ fontWeight: '500' }}>{species.common_name}</div>
-                          <div style={{ fontSize: '12px', color: '#666', fontStyle: 'italic' }}>
+                          <div style={{ fontSize: '12px', color: '#555', fontStyle: 'italic' }}>
                             {species.scientific_name}
                           </div>
                         </td>
@@ -209,7 +204,7 @@ function SpeciesModal({ userId, userName, onClose }) {
                   </tbody>
                 </table>
               ) : (
-                <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
+                <div style={{ textAlign: 'center', padding: '40px', color: '#555' }}>
                   No species recorded yet.
                 </div>
               )}

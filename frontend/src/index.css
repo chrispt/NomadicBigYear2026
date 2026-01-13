@@ -40,21 +40,29 @@ code {
 }
 
 .btn-primary {
-  background-color: #4CAF50;
+  background-color: #1e88e5;
   color: white;
 }
 
 .btn-primary:hover {
-  background-color: #45a049;
+  background-color: #1565c0;
 }
 
 .btn-secondary {
-  background-color: #008CBA;
-  color: white;
+  background-color: white;
+  color: #1e88e5;
+  border: 2px solid #1e88e5;
 }
 
 .btn-secondary:hover {
-  background-color: #007399;
+  background-color: #e3f2fd;
+}
+
+.btn:disabled,
+.btn[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 
 .card {
@@ -83,14 +91,18 @@ code {
   font-weight: 600;
 }
 
+.table tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
 .table tr:hover {
-  background-color: #f5f5f5;
+  background-color: #f0f0f0;
 }
 
 .loading {
   text-align: center;
   padding: 40px;
-  color: #666;
+  color: #555;
 }
 
 .error {
@@ -384,4 +396,105 @@ a:hover {
   .section {
     padding: 32px 12px;
   }
+}
+
+/* Form input styles */
+.form-input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+  transition: border-color 0.2s ease;
+}
+
+.form-input:focus {
+  border-color: #1e88e5;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(30, 136, 229, 0.1);
+}
+
+.form-input::placeholder {
+  color: #999;
+}
+
+/* Modal animations */
+.modal-backdrop {
+  animation: fadeIn 0.2s ease-out;
+}
+
+.modal-content {
+  animation: slideIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Close button style */
+.btn-close {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #666;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.btn-close:hover {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+/* Navigation header */
+.nav-header {
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  padding: 12px 20px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.nav-header .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-logo {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1e88e5;
+}
+
+.nav-links {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.nav-link {
+  color: #555;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.nav-link:hover {
+  color: #1e88e5;
+  text-decoration: none;
 }

@@ -80,41 +80,33 @@ function ProfilePage() {
               {editing ? (
                 <>
                   <div style={{ marginBottom: '20px' }}>
-                    <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>
+                    <label htmlFor="name" style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>
                       Name
                     </label>
                     <input
+                      id="name"
                       type="text"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      style={{
-                        width: '100%',
-                        padding: '10px',
-                        border: '1px solid #ddd',
-                        borderRadius: '4px',
-                      }}
+                      className="form-input"
                     />
                   </div>
 
                   <div style={{ marginBottom: '20px' }}>
-                    <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>
+                    <label htmlFor="privacy" style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>
                       Privacy Level
                     </label>
                     <select
+                      id="privacy"
                       value={privacyLevel}
                       onChange={(e) => setPrivacyLevel(e.target.value)}
-                      style={{
-                        width: '100%',
-                        padding: '10px',
-                        border: '1px solid #ddd',
-                        borderRadius: '4px',
-                      }}
+                      className="form-input"
                     >
                       <option value="public">Public - Show all details</option>
                       <option value="counts_only">Counts Only - Hide observation details</option>
                       <option value="private">Private - Don't show on leaderboard</option>
                     </select>
-                    <p style={{ fontSize: '14px', color: '#666', marginTop: '5px' }}>
+                    <p style={{ fontSize: '14px', color: '#555', marginTop: '5px' }}>
                       {privacyLevel === 'public' && 'Other users can see your full observation details'}
                       {privacyLevel === 'counts_only' && 'Only your species count appears on leaderboard'}
                       {privacyLevel === 'private' && 'You won\'t appear on the public leaderboard'}

@@ -177,11 +177,11 @@ function LeaderboardPage() {
               <table className="table">
                 <thead>
                   <tr>
-                    <th style={{ width: '80px' }}>Rank</th>
-                    <th>Name</th>
-                    <th style={{ textAlign: 'right' }}>Species Count</th>
-                    <th>Last Observation</th>
-                    <th>Privacy</th>
+                    <th scope="col" style={{ width: '80px' }}>Rank</th>
+                    <th scope="col">Name</th>
+                    <th scope="col" style={{ textAlign: 'right' }}>Species Count</th>
+                    <th scope="col">Last Observation</th>
+                    <th scope="col">Privacy</th>
                   </tr>
                 </thead>
                 <tbody>

@@ -166,7 +166,7 @@ function UploadPage() {
                 onDrop={handleDrop}
                 onDragOver={handleDragOver}
                 style={{
-                  border: '2px dashed #ddd',
+                  border: '2px dashed #aaa',
                   borderRadius: '8px',
                   padding: '40px',
                   textAlign: 'center',
