@@ -91,6 +91,7 @@ CREATE INDEX idx_geo_user ON geographic_stats(user_id);
 CREATE INDEX idx_geo_state ON geographic_stats(state_province);
 
 -- Species summary materialized view (for leaderboard)
+-- Excludes uncountable species: domestics, hybrids, spuhs, slashes
 CREATE MATERIALIZED VIEW species_summary AS
 SELECT
     u.id AS user_id,
@@ -101,7 +102,13 @@ SELECT
     MAX(o.observation_date) AS last_observation_date,
     MAX(o.uploaded_at) AS last_upload_date
 FROM users u
-LEFT JOIN observations o ON u.id = o.user_id AND EXTRACT(YEAR FROM o.observation_date) = 2026
+LEFT JOIN observations o ON u.id = o.user_id
+    AND EXTRACT(YEAR FROM o.observation_date) = 2026
+    AND o.common_name NOT LIKE '%(Domestic%'
+    AND o.common_name NOT LIKE '%hybrid%'
+    AND o.common_name NOT LIKE '% x %'
+    AND o.common_name NOT LIKE '%/%'
+    AND o.common_name NOT LIKE '%sp.%'
 GROUP BY u.id, u.name, u.email, u.privacy_level
 ORDER BY species_count DESC, last_observation_date DESC;
 

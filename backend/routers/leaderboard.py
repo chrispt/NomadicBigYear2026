@@ -1,13 +1,25 @@
 """
 Leaderboard endpoints
 """
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, HTTPException, status
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 
 from database import get_db
-from schemas import LeaderboardResponse, LeaderboardEntry, MonthlyProgressResponse, MonthlyProgress
+from schemas import (
+    LeaderboardResponse, LeaderboardEntry, MonthlyProgressResponse, MonthlyProgress,
+    PublicUserSpeciesResponse, PublicSpeciesEntry
+)
 from models import MonthlyStat, User
+
+# SQL condition to filter out uncountable species (domestics, hybrids, spuhs, slashes)
+COUNTABLE_SPECIES_FILTER = """
+    common_name NOT LIKE '%%(Domestic%%'
+    AND common_name NOT LIKE '%%hybrid%%'
+    AND common_name NOT LIKE '%% x %%'
+    AND common_name NOT LIKE '%%/%%'
+    AND common_name NOT LIKE '%%sp.%%'
+"""
 
 router = APIRouter(prefix="/leaderboard", tags=["leaderboard"])
 
@@ -104,4 +116,90 @@ async def get_user_progress(
         user_id=user_id,
         user_name=user.name,
         monthly_progress=monthly_progress
+    )
+
+@router.get("/{user_id}/species", response_model=PublicUserSpeciesResponse)
+async def get_user_species(
+    user_id: int,
+    year: int = Query(2026, description="Year to filter by"),
+    sort: str = Query("name", description="Sort by: name or date"),
+    db: Session = Depends(get_db)
+):
+    """
+    Get public species list for a user.
+    - public: Returns full species list with details
+    - counts_only: Returns only the count, no species list
+    - private: Returns 404 (user not visible on leaderboard)
+
+    Excludes uncountable species (domestics, hybrids, spuhs, slashes).
+    """
+    # Get user and check privacy
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+
+    if user.privacy_level == 'private':
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+
+    # Get countable species count
+    count_query = text(f"""
+        SELECT COUNT(DISTINCT scientific_name)
+        FROM observations
+        WHERE user_id = :user_id
+        AND EXTRACT(YEAR FROM observation_date) = :year
+        AND {COUNTABLE_SPECIES_FILTER}
+    """)
+    species_count = db.execute(count_query, {"user_id": user_id, "year": year}).scalar() or 0
+
+    # Handle counts_only privacy
+    if user.privacy_level == 'counts_only':
+        return PublicUserSpeciesResponse(
+            user_id=user.id,
+            user_name=user.name,
+            privacy_level=user.privacy_level,
+            species_count=species_count,
+            species=None,
+            message="This user has chosen to share only their species count."
+        )
+
+    # For public users, get unique species with first observation
+    order_clause = "common_name ASC" if sort == "name" else "first_obs DESC"
+
+    species_query = text(f"""
+        SELECT
+            common_name,
+            scientific_name,
+            MIN(observation_date) as first_obs,
+            (SELECT state_province FROM observations o2
+             WHERE o2.user_id = :user_id
+             AND o2.scientific_name = o.scientific_name
+             AND o2.observation_date = MIN(o.observation_date)
+             LIMIT 1) as state_province
+        FROM observations o
+        WHERE user_id = :user_id
+        AND EXTRACT(YEAR FROM observation_date) = :year
+        AND {COUNTABLE_SPECIES_FILTER}
+        GROUP BY scientific_name, common_name
+        ORDER BY {order_clause}
+    """)
+
+    result = db.execute(species_query, {"user_id": user_id, "year": year})
+    rows = result.fetchall()
+
+    species_list = [
+        PublicSpeciesEntry(
+            common_name=row.common_name,
+            scientific_name=row.scientific_name,
+            first_observation_date=row.first_obs,
+            state_province=row.state_province
+        )
+        for row in rows
+    ]
+
+    return PublicUserSpeciesResponse(
+        user_id=user.id,
+        user_name=user.name,
+        privacy_level=user.privacy_level,
+        species_count=species_count,
+        species=species_list
     )

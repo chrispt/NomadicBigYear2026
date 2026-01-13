@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../services/api';
 import { logout } from '../services/auth';
+import SpeciesModal from '../components/SpeciesModal';
 
 function LeaderboardPage() {
   const [leaderboard, setLeaderboard] = useState([]);
@@ -9,6 +10,7 @@ function LeaderboardPage() {
   const [error, setError] = useState('');
   const [year, setYear] = useState(2026);
   const [participants, setParticipants] = useState(0);
+  const [selectedUser, setSelectedUser] = useState(null);
 
   useEffect(() => {
     fetchLeaderboard();
@@ -111,7 +113,22 @@ function LeaderboardPage() {
                         </strong>
                       </td>
                       <td>
-                        <strong>{entry.name}</strong>
+                        <button
+                          onClick={() => setSelectedUser(entry)}
+                          style={{
+                            background: 'none',
+                            border: 'none',
+                            padding: 0,
+                            cursor: 'pointer',
+                            color: '#667eea',
+                            textDecoration: 'underline',
+                            fontWeight: 'bold',
+                            fontSize: 'inherit',
+                          }}
+                          title="Click to view species list"
+                        >
+                          {entry.name}
+                        </button>
                       </td>
                       <td style={{ textAlign: 'right' }}>
                         <strong style={{ fontSize: '18px', color: '#4CAF50' }}>
@@ -149,6 +166,15 @@ function LeaderboardPage() {
           </p>
         </div>
       </div>
+
+      {/* Species Modal */}
+      {selectedUser && (
+        <SpeciesModal
+          userId={selectedUser.user_id}
+          userName={selectedUser.name}
+          onClose={() => setSelectedUser(null)}
+        />
+      )}
     </div>
   );
 }

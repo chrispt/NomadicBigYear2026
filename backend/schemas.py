@@ -136,6 +136,21 @@ class SpeciesComparisonResponse(BaseModel):
     comparison: ComparisonStats
     species_only_user2: List[SpeciesInfo]
 
+# Public user species list schemas
+class PublicSpeciesEntry(BaseModel):
+    common_name: str
+    scientific_name: str
+    first_observation_date: date
+    state_province: Optional[str]
+
+class PublicUserSpeciesResponse(BaseModel):
+    user_id: int
+    user_name: str
+    privacy_level: str
+    species_count: int
+    species: Optional[List[PublicSpeciesEntry]] = None
+    message: Optional[str] = None
+
 # Activity feed schemas
 class ActivityItem(BaseModel):
     type: str
